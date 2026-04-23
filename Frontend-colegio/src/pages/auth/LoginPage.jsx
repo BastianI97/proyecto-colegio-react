@@ -18,7 +18,6 @@ function LoginPage() {
       <div style={styles.card}>
         <h1 style={styles.title}>Libro de Clases Digital</h1>
         <p style={styles.subtitle}>Colegio Bernardo O&apos;Higgins</p>
-        <p style={styles.branchTag}>Versión de prueba - rama dev-bastian</p> //agregado
 
         <div style={styles.buttonContainer}>
           <button style={styles.profesorButton} onClick={() => handleLogin('PROFESOR')}>
@@ -47,14 +46,6 @@ const styles = {
     background: '#f3f4f6',
     padding: '20px',
   },
-
-  branchTag: {
-  marginBottom: '20px',
-  color: '#2563eb',
-  fontSize: '14px', //agregado
-  fontWeight: '600',
-},
-
   card: {
     background: '#ffffff',
     padding: '40px',
