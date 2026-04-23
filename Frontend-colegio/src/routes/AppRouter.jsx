@@ -8,6 +8,7 @@ import AlumnoCalificacionesPage from '../pages/alumno/AlumnoCalificacionesPage'
 import AlumnoHorarioPage from '../pages/alumno/AlumnoHorarioPage'
 import ProfesorSeleccionCursoPage from '../pages/profesor/ProfesorSeleccionCursoPage'
 import ProfesorAsistenciaPage from '../pages/profesor/ProfesorAsistenciaPage'
+import AlumnoAsignaturasPage from '../pages/alumno/AlumnoAsignaturasPage' //Agregado
 
 function AppRouter() {
   return (
@@ -50,6 +51,15 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+
+        <Route
+  path="/alumno/asignaturas"
+  element={
+    <ProtectedRoute allowedRoles={['ALUMNO']}>
+      <AlumnoAsignaturasPage />
+    </ProtectedRoute>
+  }
+/>
      
      <Route
         path="/alumno/calificaciones"
