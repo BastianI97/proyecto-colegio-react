@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RoleLayout from '../../components/layout/RoleLayout'
 import TopMenuBar from '../../components/common/TopMenuBar'
+import PageTabs from '../../components/common/PageTabs'
 
 function ProfesorSeleccionCursoPage() {
   const navigate = useNavigate()
@@ -23,6 +24,28 @@ function ProfesorSeleccionCursoPage() {
     'IV° Medio',
   ]
 
+  useEffect(() => {
+    const savedCourse = localStorage.getItem('selectedCourse')
+    if (savedCourse) {
+      setSelectedCourse(savedCourse)
+    }
+  }, [])
+
+  const tabs = [
+  { label: 'Seleccionar curso', value: 'seleccion', path: '/profesor/seleccion-curso' },
+  { label: 'Resumen', value: 'resumen', path: '/profesor/dashboard' },
+  { label: 'Notas', value: 'notas', path: '/profesor/notas' },
+  { label: 'Asistencia', value: 'asistencia', path: '/profesor/asistencia' },
+]
+
+  const handleTabClick = (tab) => {
+    if ((tab.value === 'notas' || tab.value === 'asistencia') && selectedCourse === 'ingrese curso') {
+      return
+    }
+
+    if (tab.path) navigate(tab.path)
+  }
+
   const handleSelectCourse = (curso) => {
     setSelectedCourse(curso)
     localStorage.setItem('selectedCourse', curso)
@@ -37,6 +60,10 @@ function ProfesorSeleccionCursoPage() {
       <section style={styles.content}>
         <p style={styles.subtitle}>Resumen General</p>
         <h1 style={styles.title}>LIBRO DE CLASES</h1>
+
+        <div style={styles.tabsWrapper}>
+          <PageTabs tabs={tabs} activeTab="seleccion" onTabClick={handleTabClick} />
+        </div>
 
         <div
           style={styles.dropdownBlock}
@@ -81,8 +108,11 @@ const styles = {
     fontWeight: '800',
     color: '#ffffff',
     lineHeight: 1,
-    marginBottom: '34px',
+    marginBottom: '24px',
     textShadow: '0 4px 10px rgba(0,0,0,0.16)',
+  },
+  tabsWrapper: {
+    marginBottom: '24px',
   },
   dropdownBlock: {
     position: 'relative',

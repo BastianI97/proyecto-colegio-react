@@ -1,22 +1,37 @@
-import { NavLink } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 const menuItems = [
-  { label: 'Inicio', path: '#', icon: '🎓' },
-  { label: 'Panel', path: '#', icon: '🖼️' },
-  { label: 'Documentos', path: '#', icon: '📄' },
-  { label: 'Configuración', path: '#', icon: '⚙️' },
-  { label: 'Notificaciones', path: '#', icon: '🔔' },
-  { label: 'Mensajes', path: '#', icon: '✉️' },
+  { label: 'Panel', icon: '🖼️' },
+  { label: 'Documentos', icon: '📄' },
+  { label: 'Configuración', icon: '⚙️' },
+  { label: 'Notificaciones', icon: '🔔' },
+  { label: 'Mensajes', icon: '✉️' },
 ]
 
 function Sidebar() {
+  const navigate = useNavigate()
+  const { logout } = useAuth()
+
+  const handleGoToLogin = () => {
+    logout()
+    localStorage.removeItem('selectedCourse')
+    navigate('/login')
+  }
+
   return (
     <aside style={styles.sidebar}>
-      <div style={styles.logo}>🎓</div>
+      <button
+        style={styles.logoButton}
+        onClick={handleGoToLogin}
+        title="Cerrar sesión e ir al login"
+      >
+        🎓
+      </button>
 
       <nav style={styles.nav}>
         {menuItems.map((item, index) => (
-          <div key={index} style={styles.navItem}>
+          <div key={index} style={styles.navItem} title={item.label}>
             <span style={styles.icon}>{item.icon}</span>
           </div>
         ))}
@@ -37,7 +52,7 @@ const styles = {
     flexShrink: 0,
     boxShadow: '4px 0 14px rgba(0,0,0,0.12)',
   },
-  logo: {
+  logoButton: {
     width: '56px',
     height: '56px',
     borderRadius: '50%',
@@ -48,6 +63,8 @@ const styles = {
     fontSize: '26px',
     color: '#fff',
     marginBottom: '24px',
+    border: 'none',
+    cursor: 'pointer',
   },
   nav: {
     display: 'flex',

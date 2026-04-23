@@ -5,35 +5,70 @@ import TopNavbar from '../../components/layout/TopNavbar'
 import HeroBanner from '../../components/common/HeroBanner'
 import InfoCard from '../../components/common/InfoCard'
 
+const BASE_STUDENTS = [
+  { id: 1, name: 'Héctor González', present: true },
+  { id: 2, name: 'Sofía Rojas', present: true },
+  { id: 3, name: 'Martín Pérez', present: false },
+  { id: 4, name: 'Valentina Díaz', present: true },
+  { id: 5, name: 'Benjamín Soto', present: false },
+  { id: 6, name: 'Amanda Torres', present: true },
+]
+
 function ProfesorAsistenciaPage() {
   const navigate = useNavigate()
   const [selectedCourse, setSelectedCourse] = useState('5° Básico')
+  const [students, setStudents] = useState(BASE_STUDENTS)
+  const [saveMessage, setSaveMessage] = useState('')
 
   useEffect(() => {
     const savedCourse = localStorage.getItem('selectedCourse')
+
     if (savedCourse) {
       setSelectedCourse(savedCourse)
+    } else {
+      navigate('/profesor/seleccion-curso')
     }
-  }, [])
+  }, [navigate])
 
-  const students = [
-    { id: 1, name: 'Héctor González', present: true },
-    { id: 2, name: 'Sofía Rojas', present: true },
-    { id: 3, name: 'Martín Pérez', present: false },
-    { id: 4, name: 'Valentina Díaz', present: true },
-    { id: 5, name: 'Benjamín Soto', present: false },
-    { id: 6, name: 'Amanda Torres', present: true },
-  ]
+  useEffect(() => {
+    const savedAttendance = localStorage.getItem(`attendance_${selectedCourse}`)
+
+    if (savedAttendance) {
+      setStudents(JSON.parse(savedAttendance))
+    } else {
+      setStudents(BASE_STUDENTS)
+    }
+  }, [selectedCourse])
 
   const tabs = [
-    { label: 'Notas', value: 'notas', path: '/profesor/dashboard' },
-    { label: selectedCourse, value: 'curso', path: '/profesor/seleccion-curso' },
-    { label: 'Asistencia', value: 'asistencia', path: '/profesor/asistencia' },
-  ]
+  { label: 'Resumen', value: 'resumen', path: '/profesor/dashboard' },
+  { label: 'Notas', value: 'notas', path: '/profesor/notas' },
+  { label: selectedCourse, value: 'curso', path: '/profesor/seleccion-curso' },
+  { label: 'Asistencia', value: 'asistencia', path: '/profesor/asistencia' },
+]
 
   const handleTabClick = (tab) => {
     if (tab.path) navigate(tab.path)
   }
+
+  const handleAttendanceChange = (id, value) => {
+    setStudents((prev) =>
+      prev.map((student) =>
+        student.id === id ? { ...student, present: value } : student
+      )
+    )
+    setSaveMessage('')
+  }
+
+  const handleSaveAttendance = () => {
+    localStorage.setItem(`attendance_${selectedCourse}`, JSON.stringify(students))
+    setSaveMessage(`Asistencia guardada para ${selectedCourse}`)
+  }
+
+  const presentCount = students.filter((student) => student.present).length
+  const absentCount = students.length - presentCount
+  const attendancePercent =
+    students.length > 0 ? Math.round((presentCount / students.length) * 100) : 0
 
   return (
     <RoleLayout background="linear-gradient(135deg, #eab308 0%, #facc15 100%)">
@@ -44,7 +79,10 @@ function ProfesorAsistenciaPage() {
         activeTab="asistencia"
         actions={[{ label: 'Pasar Asistencia ✓', background: '#f8f4e8', color: '#111827' }]}
         onTabClick={handleTabClick}
+        onActionClick={handleSaveAttendance}
       />
+
+      {saveMessage && <div style={styles.saveBanner}>{saveMessage}</div>}
 
       <div style={styles.filtersRow}>
         <div style={styles.selectBox}>📅 06 de jun 2021</div>
@@ -58,22 +96,21 @@ function ProfesorAsistenciaPage() {
       />
 
       <section style={styles.summaryGrid}>
-        <InfoCard title="Asistencia del Mes">
+        <InfoCard title="Asistencia del Día">
           <div style={styles.cardContent}>
-            <div style={styles.circle}>94%</div>
-            <div style={styles.fakeChart}>
-              <div style={styles.chartBar}></div>
+            <div style={styles.circle}>{attendancePercent}%</div>
+            <div style={styles.statsColumn}>
+              <p style={styles.statLine}>Presentes: {presentCount}</p>
+              <p style={styles.statLine}>Ausentes: {absentCount}</p>
+              <p style={styles.statLine}>Total alumnos: {students.length}</p>
             </div>
           </div>
         </InfoCard>
 
-        <InfoCard title="Promedio General">
+        <InfoCard title="Resumen">
           <div style={styles.cardContent}>
-            <div style={styles.bigNumber}>6.5</div>
-            <div style={styles.fakeBars}>
-              <div style={{ ...styles.bar, height: '70px' }}></div>
-              <div style={{ ...styles.bar, height: '82px', background: '#facc15' }}></div>
-              <div style={{ ...styles.bar, height: '55px', background: '#06b6d4' }}></div>
+            <div style={styles.fakeChart}>
+              <div style={styles.chartBar}></div>
             </div>
           </div>
         </InfoCard>
@@ -82,15 +119,40 @@ function ProfesorAsistenciaPage() {
       <InfoCard title="Listado de Asistencia" minHeight="auto">
         <div style={styles.tableHeader}>
           <span>Alumno</span>
-          <span>Estado</span>
+          <span>Estado actual</span>
+          <span>Acción</span>
         </div>
 
         {students.map((student) => (
           <div key={student.id} style={styles.tableRow}>
             <span>{student.name}</span>
+
             <span style={student.present ? styles.presentBadge : styles.absentBadge}>
               {student.present ? 'Presente' : 'Ausente'}
             </span>
+
+            <div style={styles.actionsCell}>
+              <button
+                style={{
+                  ...styles.choiceButton,
+                  ...(student.present ? styles.choiceButtonActivePresent : {}),
+                }}
+                onClick={() => handleAttendanceChange(student.id, true)}
+              >
+                Presente
+              </button>
+
+              <button
+                style={{
+                  ...styles.choiceButton,
+                  ...styles.choiceButtonAbsent,
+                  ...(!student.present ? styles.choiceButtonActiveAbsent : {}),
+                }}
+                onClick={() => handleAttendanceChange(student.id, false)}
+              >
+                Ausente
+              </button>
+            </div>
           </div>
         ))}
       </InfoCard>
@@ -99,6 +161,16 @@ function ProfesorAsistenciaPage() {
 }
 
 const styles = {
+  saveBanner: {
+    background: '#dcfce7',
+    color: '#166534',
+    padding: '14px 18px',
+    borderRadius: '14px',
+    fontSize: '18px',
+    fontWeight: '700',
+    marginBottom: '18px',
+    boxShadow: '0 8px 18px rgba(0,0,0,0.08)',
+  },
   filtersRow: {
     display: 'flex',
     gap: '16px',
@@ -139,6 +211,17 @@ const styles = {
     fontWeight: '800',
     color: '#111827',
   },
+  statsColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    minWidth: '220px',
+  },
+  statLine: {
+    fontSize: '20px',
+    color: '#111827',
+    fontWeight: '600',
+  },
   fakeChart: {
     flex: 1,
     minWidth: '220px',
@@ -159,26 +242,9 @@ const styles = {
     boxShadow:
       '40px -20px 0 #2563eb, 80px -5px 0 #2563eb, 120px -28px 0 #2563eb, 160px -10px 0 #2563eb',
   },
-  bigNumber: {
-    fontSize: '88px',
-    fontWeight: '800',
-    color: '#111827',
-    lineHeight: 1,
-  },
-  fakeBars: {
-    display: 'flex',
-    alignItems: 'flex-end',
-    gap: '18px',
-    height: '120px',
-  },
-  bar: {
-    width: '48px',
-    background: '#3b82f6',
-    borderRadius: '12px 12px 0 0',
-  },
   tableHeader: {
     display: 'grid',
-    gridTemplateColumns: '2fr 1fr',
+    gridTemplateColumns: '2fr 1fr 1.5fr',
     gap: '16px',
     fontSize: '20px',
     fontWeight: '700',
@@ -189,7 +255,7 @@ const styles = {
   },
   tableRow: {
     display: 'grid',
-    gridTemplateColumns: '2fr 1fr',
+    gridTemplateColumns: '2fr 1fr 1.5fr',
     gap: '16px',
     alignItems: 'center',
     padding: '14px 0',
@@ -214,6 +280,31 @@ const styles = {
     borderRadius: '999px',
     fontWeight: '700',
     width: 'fit-content',
+  },
+  actionsCell: {
+    display: 'flex',
+    gap: '10px',
+    flexWrap: 'wrap',
+  },
+  choiceButton: {
+    border: 'none',
+    background: '#e5e7eb',
+    color: '#111827',
+    padding: '10px 14px',
+    borderRadius: '10px',
+    cursor: 'pointer',
+    fontWeight: '700',
+  },
+  choiceButtonAbsent: {
+    background: '#f3f4f6',
+  },
+  choiceButtonActivePresent: {
+    background: '#22c55e',
+    color: '#ffffff',
+  },
+  choiceButtonActiveAbsent: {
+    background: '#ef4444',
+    color: '#ffffff',
   },
 }
 
