@@ -1,0 +1,33 @@
+REPOSITORIOS DEL PROYECTO
+Proyecto: Libro de Clases Digital - Colegio Bernardo O'Higgins
+
+Repositorio principal:
+- Pendiente: pegar aquí el enlace del repositorio principal de GitHub.
+
+Frontend:
+- Carpeta: Frontend-colegio
+- Repositorio: Pendiente
+- Descripción: Componente frontend desarrollado con React/Vite. Contiene las vistas de profesor, alumno y apoderado, incluyendo dashboard, horarios, calificaciones y asistencia.
+
+BFF:
+- Carpeta: Backend-colegio/bff-colegio
+- Repositorio: Pendiente
+- Descripción: Backend For Frontend encargado de centralizar la comunicación entre el frontend y los microservicios de notas y asistencia.
+
+Microservicio de Notas:
+- Carpeta: Backend-colegio/ms-notas
+- Repositorio: Pendiente
+- Descripción: Microservicio encargado de registrar, consultar, actualizar, eliminar notas y calcular promedios por alumno.
+
+Microservicio de Asistencia:
+- Carpeta: Backend-colegio/ms-asistencia
+- Repositorio: Pendiente
+- Descripción: Microservicio encargado de registrar, consultar, actualizar, eliminar asistencias y calcular resúmenes de asistencia por alumno.
+
+Backend base existente:
+- Carpeta: Backend-colegio/auth-servise
+- Repositorio: Pendiente
+- Descripción: Servicio backend base del proyecto, desarrollado con Spring Boot, Maven, JPA y MySQL. Contiene gestión académica inicial, como cursos y alumnos.
+
+Observación:
+Los enlaces deben ser reemplazados por las URLs reales de GitHub antes de la entrega.
