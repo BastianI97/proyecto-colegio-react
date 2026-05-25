@@ -1,16 +1,50 @@
-# React + Vite
+# Frontend Colegio Bernardo O'Higgins
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Descripción
 
-Currently, two official plugins are available:
+Frontend del sistema Libro de Clases Digital del Colegio Bernardo O'Higgins.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Este componente fue desarrollado con React y Vite. Permite visualizar interfaces diferenciadas según el rol del usuario: profesor, alumno y apoderado.
 
-## React Compiler
+El frontend se conecta con el Backend For Frontend del proyecto para consultar información académica como promedio y asistencia del alumno.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Tecnologías utilizadas
 
-## Expanding the ESLint configuration
+- React
+- Vite
+- JavaScript
+- CSS
+- Axios
+- React Router DOM
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Roles disponibles
+
+El sistema contempla vistas para los siguientes roles:
+
+- Profesor
+- Alumno
+- Apoderado
+
+## Funcionalidades principales
+
+- Login por rol.
+- Dashboard de alumno.
+- Dashboard de profesor.
+- Dashboard de apoderado.
+- Vista de asignaturas del alumno.
+- Vista de horario del alumno.
+- Vista de calificaciones del alumno.
+- Consulta de datos académicos desde el BFF.
+- Visualización de promedio general.
+- Visualización de porcentaje de asistencia.
+
+## Conexión con backend
+
+El frontend consume el Backend For Frontend disponible en:
+
+```txt
+http://localhost:8080
+```txt
+http://localhost:8080
+http://localhost:8080
+
