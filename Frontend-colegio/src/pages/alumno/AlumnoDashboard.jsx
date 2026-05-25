@@ -9,7 +9,7 @@ function AlumnoDashboard() {
 
   const tabs = [
     { label: 'Mi Grado: 5° Grado B', value: 'grado', path: '/alumno/dashboard' },
-    { label: 'mis asignaturas', value: 'asignaturas', path: '/alumno/dashboard' },
+    { label: 'mis asignaturas', value: 'asignaturas', path: '/alumno/asignaturas' },
     { label: 'horarios', value: 'horarios', path: '/alumno/horario' },
     { label: 'mis calificaciones', value: 'calificaciones', path: '/alumno/calificaciones' },
   ]

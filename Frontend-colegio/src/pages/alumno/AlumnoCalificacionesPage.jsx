@@ -1,72 +1,55 @@
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import RoleLayout from '../../components/layout/RoleLayout'
 import ProfileHeader from '../../components/common/ProfileHeader'
 import InfoCard from '../../components/common/InfoCard'
 
+const STUDENT_NAME = 'Héctor González'
+const DEFAULT_COURSE = '5° Básico'
+
 function AlumnoCalificacionesPage() {
   const navigate = useNavigate()
+  const [grades, setGrades] = useState({})
 
   const tabs = [
     { label: 'Mi Grado: 5° Grado B', value: 'grado', path: '/alumno/dashboard' },
-    { label: 'mis asignaturas', value: 'asignaturas', path: '/alumno/dashboard' },
+    { label: 'mis asignaturas', value: 'asignaturas', path: '/alumno/asignaturas' },
     { label: 'horarios', value: 'horarios', path: '/alumno/horario' },
     { label: 'mis calificaciones', value: 'calificaciones', path: '/alumno/calificaciones' },
   ]
 
-  const subjects = [
-    {
-      name: 'Matemáticas',
-      color: '#4f8df7',
-      icon: '🧮',
-      grades: [
-        { month: 'Mar', score: '6.5', avg: '6.8' },
-        { month: 'Abr', score: '6.7', avg: '' },
-        { month: 'May', score: '6.4', avg: '7.0' },
-        { month: 'Jun', score: '6.9', avg: '' },
-      ],
-      accumulated: '6.6',
-    },
-    {
-      name: 'Historia',
-      color: '#e7b53b',
-      icon: '📜',
-      grades: [
-        { month: 'Mar', score: '6.2', avg: '' },
-        { month: 'Abr', score: '6.9', avg: '' },
-        { month: 'May', score: '6.5', avg: '' },
-        { month: 'Jun', score: '6.7', avg: '' },
-      ],
-      accumulated: '6.6',
-    },
-    {
-      name: 'Ciencias Naturales',
-      color: '#2eb67d',
-      icon: '⚛️',
-      grades: [
-        { month: 'Mar', score: '6.0', avg: '6.4' },
-        { month: 'Abr', score: '6.1', avg: '' },
-        { month: 'May', score: '6.8', avg: '6.4' },
-        { month: 'Jun', score: '6.9', avg: '6.9' },
-      ],
-      accumulated: '6.4',
-    },
-    {
-      name: 'Lengua y Literatura',
-      color: '#b04ac9',
-      icon: '🪶',
-      grades: [
-        { month: 'Mar', score: '6.7', avg: '7.0' },
-        { month: 'Abr', score: '6.8', avg: '6.8' },
-        { month: 'May', score: '6.6', avg: '6.6' },
-        { month: 'Jun', score: '6.9', avg: '6.9' },
-      ],
-      accumulated: '6.8',
-    },
-  ]
+  useEffect(() => {
+    const selectedCourse = localStorage.getItem('selectedCourse') || DEFAULT_COURSE
+    const savedGrades = localStorage.getItem(`grades_${selectedCourse}`)
+
+    if (savedGrades) {
+      setGrades(JSON.parse(savedGrades))
+    } else {
+      setGrades({})
+    }
+  }, [])
 
   const handleTabClick = (tab) => {
     if (tab.path) navigate(tab.path)
   }
+
+  const getStudentGrades = () => {
+    const result = {}
+
+    Object.keys(grades).forEach((key) => {
+      const [student, subject] = key.split('__')
+
+      if (student === STUDENT_NAME) {
+        result[subject] = [...grades[key]].sort(
+          (a, b) => new Date(a.date) - new Date(b.date)
+        )
+      }
+    })
+
+    return result
+  }
+
+  const studentGrades = getStudentGrades()
 
   return (
     <RoleLayout background="linear-gradient(135deg, #9be570 0%, #b8f58a 100%)">
@@ -83,55 +66,74 @@ function AlumnoCalificacionesPage() {
       <section style={styles.titleRow}>
         <div>
           <h2 style={styles.pageTitle}>Mi Boletín de Calificaciones - Ciclo 2024</h2>
-          <div style={styles.infoBadge}>ℹ️ Calificaciones parciales y acumuladas hasta Junio (S2)</div>
+          <div style={styles.infoBadge}>
+            ℹ️ Calificaciones parciales y acumuladas hasta Junio (S2)
+          </div>
         </div>
 
         <div style={styles.periodBadge}>🗓️ Junio (Semana 2)</div>
       </section>
 
       <section style={styles.grid}>
-        {subjects.map((subject) => (
-          <InfoCard key={subject.name} minHeight="auto">
-            <div
-              style={{
-                ...styles.subjectHeader,
-                background: `linear-gradient(135deg, ${subject.color}, #ffffff)`,
-              }}
-            >
-              <div style={styles.subjectTitleRow}>
-                <span style={styles.subjectIcon}>{subject.icon}</span>
-                <h3 style={styles.subjectTitle}>{subject.name}</h3>
-              </div>
-
-              <div style={styles.subjectContent}>
-                <div style={styles.tableSection}>
-                  <div style={styles.tableHeader}>
-                    <span>Mes</span>
-                    <span>Notas Parciales</span>
-                    <span>Promedio</span>
-                  </div>
-
-                  {subject.grades.map((item) => (
-                    <div key={item.month} style={styles.tableRow}>
-                      <span>{item.month}</span>
-                      <span style={styles.scorePill}>{item.score}</span>
-                      <span>{item.avg}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div style={styles.chartBox}>
-                  <div style={styles.fakeChartArea}>
-                    <div style={styles.fakeLine}></div>
-                  </div>
-                  <p style={styles.accumulated}>
-                    Promedio Acumulado: <strong>{subject.accumulated}</strong>
-                  </p>
-                </div>
-              </div>
-            </div>
+        {Object.keys(studentGrades).length === 0 ? (
+          <InfoCard minHeight="auto">
+            <p style={styles.emptyState}>
+              Aún no hay calificaciones registradas para este alumno.
+            </p>
           </InfoCard>
-        ))}
+        ) : (
+          Object.entries(studentGrades).map(([subject, entries]) => {
+            const average =
+              entries.length > 0
+                ? (
+                    entries.reduce((acc, item) => acc + Number(item.score), 0) /
+                    entries.length
+                  ).toFixed(1)
+                : '--'
+
+            return (
+              <InfoCard key={subject} minHeight="auto">
+                <div
+                  style={{
+                    ...styles.subjectHeader,
+                    background: 'linear-gradient(135deg, #dbeafe, #ffffff)',
+                  }}
+                >
+                  <div style={styles.subjectTitleRow}>
+                    <h3 style={styles.subjectTitle}>{subject}</h3>
+                  </div>
+
+                  <div style={styles.subjectContent}>
+                    <div style={styles.tableSection}>
+                      <div style={styles.tableHeader}>
+                        <span>Fecha</span>
+                        <span>Evaluación</span>
+                        <span>Nota</span>
+                      </div>
+
+                      {entries.map((item) => (
+                        <div key={item.id} style={styles.tableRow}>
+                          <span>{item.date}</span>
+                          <span>{item.title}</span>
+                          <span style={styles.scorePill}>{item.score}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div style={styles.chartBox}>
+                      <div style={styles.fakeChartArea}>
+                        <div style={styles.fakeLine}></div>
+                      </div>
+                      <p style={styles.accumulated}>
+                        Promedio Acumulado: <strong>{average}</strong>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </InfoCard>
+            )
+          })
+        )}
       </section>
     </RoleLayout>
   )
@@ -183,9 +185,6 @@ const styles = {
     gap: '12px',
     marginBottom: '18px',
   },
-  subjectIcon: {
-    fontSize: '28px',
-  },
   subjectTitle: {
     fontSize: '28px',
     fontWeight: '800',
@@ -204,7 +203,7 @@ const styles = {
   },
   tableHeader: {
     display: 'grid',
-    gridTemplateColumns: '0.6fr 1fr 0.8fr',
+    gridTemplateColumns: '1fr 1.4fr 0.8fr',
     gap: '12px',
     fontWeight: '700',
     color: '#111827',
@@ -212,17 +211,18 @@ const styles = {
   },
   tableRow: {
     display: 'grid',
-    gridTemplateColumns: '0.6fr 1fr 0.8fr',
+    gridTemplateColumns: '1fr 1.4fr 0.8fr',
     gap: '12px',
     alignItems: 'center',
     fontSize: '18px',
     color: '#111827',
   },
   scorePill: {
-    background: 'rgba(255,255,255,0.55)',
+    background: 'rgba(255,255,255,0.75)',
     padding: '8px 14px',
     borderRadius: '10px',
     textAlign: 'center',
+    fontWeight: '700',
   },
   chartBox: {
     display: 'flex',
@@ -252,6 +252,11 @@ const styles = {
     marginTop: '14px',
     fontSize: '20px',
     color: '#111827',
+  },
+  emptyState: {
+    padding: '20px',
+    fontSize: '18px',
+    color: '#6b7280',
   },
 }
 

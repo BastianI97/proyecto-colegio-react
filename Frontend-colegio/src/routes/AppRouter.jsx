@@ -8,12 +8,18 @@ import AlumnoCalificacionesPage from '../pages/alumno/AlumnoCalificacionesPage'
 import AlumnoHorarioPage from '../pages/alumno/AlumnoHorarioPage'
 import ProfesorSeleccionCursoPage from '../pages/profesor/ProfesorSeleccionCursoPage'
 import ProfesorAsistenciaPage from '../pages/profesor/ProfesorAsistenciaPage'
+import AlumnoAsignaturasPage from '../pages/alumno/AlumnoAsignaturasPage' //Agregado
+import HomePage from '../pages/public/HomePage' //agregado
+import ProfesorNotasPage from '../pages/profesor/ProfesorNotasPage' // agregado 
+
+
 
 function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/home" element={<HomePage />} /> // agregado
 
       <Route
         path="/profesor/dashboard"
@@ -42,6 +48,15 @@ function AppRouter() {
   }
 />
 
+<Route
+  path="/profesor/notas"
+  element={
+    <ProtectedRoute allowedRoles={['PROFESOR']}> // agregado
+      <ProfesorNotasPage />
+    </ProtectedRoute>
+  }
+/>
+
       <Route
         path="/alumno/dashboard"
         element={
@@ -50,6 +65,15 @@ function AppRouter() {
           </ProtectedRoute>
         }
       />
+
+        <Route
+  path="/alumno/asignaturas"
+  element={
+    <ProtectedRoute allowedRoles={['ALUMNO']}>
+      <AlumnoAsignaturasPage />
+    </ProtectedRoute>
+  }
+/>
      
      <Route
         path="/alumno/calificaciones"
