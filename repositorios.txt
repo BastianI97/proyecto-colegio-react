@@ -2,32 +2,34 @@ REPOSITORIOS DEL PROYECTO
 Proyecto: Libro de Clases Digital - Colegio Bernardo O'Higgins
 
 Repositorio principal:
-- Pendiente: pegar aquí el enlace del repositorio principal de GitHub.
+- https://github.com/Bastian197/proyecto-colegio-react
 
 Frontend:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
 - Carpeta: Frontend-colegio
-- Repositorio: Pendiente
-- Descripción: Componente frontend desarrollado con React/Vite. Contiene las vistas de profesor, alumno y apoderado, incluyendo dashboard, horarios, calificaciones y asistencia.
+- Descripción: Componente frontend desarrollado con React/Vite. Contiene vistas para profesor, alumno y apoderado, incluyendo dashboard, horarios, calificaciones y asistencia.
 
-BFF:
+Backend For Frontend:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
 - Carpeta: Backend-colegio/bff-colegio
-- Repositorio: Pendiente
-- Descripción: Backend For Frontend encargado de centralizar la comunicación entre el frontend y los microservicios de notas y asistencia.
+- Descripción: BFF encargado de centralizar la comunicación entre el frontend y los microservicios de notas y asistencia.
 
 Microservicio de Notas:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
 - Carpeta: Backend-colegio/ms-notas
-- Repositorio: Pendiente
 - Descripción: Microservicio encargado de registrar, consultar, actualizar, eliminar notas y calcular promedios por alumno.
 
 Microservicio de Asistencia:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
 - Carpeta: Backend-colegio/ms-asistencia
-- Repositorio: Pendiente
 - Descripción: Microservicio encargado de registrar, consultar, actualizar, eliminar asistencias y calcular resúmenes de asistencia por alumno.
 
-Backend base existente:
+Backend base:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
 - Carpeta: Backend-colegio/auth-servise
-- Repositorio: Pendiente
-- Descripción: Servicio backend base del proyecto, desarrollado con Spring Boot, Maven, JPA y MySQL. Contiene gestión académica inicial, como cursos y alumnos.
+- Descripción: Servicio backend base existente del proyecto, con estructura Spring Boot, Maven, JPA y MySQL.
 
-Observación:
-Los enlaces deben ser reemplazados por las URLs reales de GitHub antes de la entrega.
+Arquetipo/Base Maven:
+- Repositorio: https://github.com/Bastian197/proyecto-colegio-react
+- Carpeta: Backend-colegio/arquetipo-base-maven
+- Descripción: Documentación de la base Maven utilizada para construir los componentes backend del proyecto.
