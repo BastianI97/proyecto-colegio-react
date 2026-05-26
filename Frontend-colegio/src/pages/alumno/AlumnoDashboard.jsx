@@ -4,8 +4,28 @@ import ProfileHeader from '../../components/common/ProfileHeader'
 import HeroBanner from '../../components/common/HeroBanner'
 import InfoCard from '../../components/common/InfoCard'
 
+import { useEffect, useState } from 'react'              //ambos agragados
+import { obtenerResumenAlumno } from '../../api/alumnoService'
+
+
 function AlumnoDashboard() {
   const navigate = useNavigate()
+
+
+  const [resumenBackend, setResumenBackend] = useState(null)
+
+useEffect(() => {
+  obtenerResumenAlumno(1)
+    .then((data) => {
+      setResumenBackend(data)
+    })
+    .catch((error) => {
+      console.error('Error al obtener datos del backend:', error)
+    })
+}, [])
+
+const promedioBackend = resumenBackend?.promedio ?? 6.8
+const asistenciaBackend = resumenBackend?.asistencia?.porcentajeAsistencia ?? 96
 
   const tabs = [
     { label: 'Mi Grado: 5° Grado B', value: 'grado', path: '/alumno/dashboard' },
@@ -31,6 +51,7 @@ function AlumnoDashboard() {
         titleColor="#ffffff"
       />
 
+
       <HeroBanner
         title="Mis Compañeros"
         subtitle="(Estudiante Héctor González)"
@@ -42,7 +63,7 @@ function AlumnoDashboard() {
       <section style={styles.grid}>
         <InfoCard title="Mi Asistencia Individual">
           <div style={styles.cardContent}>
-            <div style={styles.circle}>96%</div>
+            <div style={styles.circle}>{Math.round(asistenciaBackend)}%</div>
 
             <div style={styles.fakeChart}>
               <div style={styles.chartLineGreen}></div>
@@ -56,7 +77,7 @@ function AlumnoDashboard() {
         <InfoCard title="Mi Promedio General">
           <div style={styles.cardContent}>
             <div>
-              <div style={styles.bigNumber}>6.8</div>
+              <div style={styles.bigNumber}>{Number(promedioBackend).toFixed(1)}</div>
               <p style={styles.scaleText}>1.0 - 7.0</p>
             </div>
 
@@ -75,6 +96,8 @@ function AlumnoDashboard() {
             <li>□ Terminar actividad de Ciencias</li>
           </ul>
         </InfoCard>
+
+     
 
         <InfoCard title="Mis Notificaciones Individuales">
           <div style={styles.notificationBox}>
