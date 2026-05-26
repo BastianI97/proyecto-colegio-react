@@ -1,66 +1,73 @@
-# Arquetipo Base Maven - Spring Boot
+# Arquetipo Base Maven Colegio
 
 ## Descripción
-Base Maven utilizada como referencia para construir los componentes backend del sistema Libro de Clases Digital.
 
-Esta base fue utilizada para generar componentes backend independientes con Spring Boot, Maven y Java 17, manteniendo una estructura común y coherente entre BFF y microservicios.
+Arquetipo Maven formal utilizado para generar microservicios Spring Boot base del sistema Libro de Clases Digital del Colegio Bernardo O'Higgins.
 
-## Componentes generados a partir de esta base
-- bff-colegio
-- ms-notas
-- ms-asistencia
+Este arquetipo permite crear un proyecto backend con estructura inicial, dependencias Maven, clase principal, controller, service, configuración de seguridad, archivo application.properties y prueba unitaria base.
 
 ## Tecnología base
+
 - Java 17
 - Maven
 - Spring Boot 3.5.3
 - Spring Web
-- Spring Data JPA
 - Spring Validation
-- Spring Security, en microservicios que exponen endpoints protegibles
-- MySQL
+- Spring Security
 - JUnit 5
-- Mockito
 
-## Estructura estándar
+## Estructura del arquetipo
 
-nombre-componente/
+arquetipo-base-maven/
 - pom.xml
-- mvnw
-- mvnw.cmd
-- src/main/java
-- src/main/resources/application.properties
-- src/test/java
-- README.md
+- src/main/resources/META-INF/maven/archetype-metadata.xml
+- src/main/resources/archetype-resources/
+  - pom.xml
+  - README.md
+  - src/main/java/
+  - src/main/resources/application.properties
+  - src/test/java/
 
-## Estructura de paquetes sugerida para microservicios
+## Estructura generada
 
-com.colegio.nombrecomponente/
-- controller
-- service
-- repository
-- entity
-- config
+El arquetipo genera un microservicio con la siguiente estructura:
 
-## Estructura de paquetes sugerida para BFF
-
-com.colegio.bff/
 - controller
 - service
 - config
+- resources
+- test
 
-## Pasos para crear un nuevo componente backend
+## Instalación local del arquetipo
 
-1. Copiar la base Maven existente.
-2. Cambiar el artifactId en pom.xml.
-3. Cambiar el name y description del proyecto.
-4. Definir el puerto en application.properties.
-5. Crear la clase principal con @SpringBootApplication.
-6. Crear paquetes controller, service, repository, entity y config, si corresponde.
-7. Crear endpoints REST según el módulo.
-8. Crear pruebas unitarias.
-9. Ejecutar ./mvnw.cmd clean test.
-10. Documentar el componente en README.md.
+Desde la carpeta del arquetipo:
+
+mvn clean install
+
+## Generación de un microservicio de ejemplo
+
+Desde la carpeta del arquetipo, se puede generar un proyecto de ejemplo con:
+
+mvn archetype:generate \
+  -DarchetypeGroupId=com.colegio \
+  -DarchetypeArtifactId=arquetipo-base-maven \
+  -DarchetypeVersion=1.0.0 \
+  -DgroupId=com.colegio \
+  -DartifactId=ms-ejemplo \
+  -Dversion=0.0.1-SNAPSHOT \
+  -Dpackage=com.colegio.ejemplo \
+  -DinteractiveMode=false
+
+## Endpoint generado
+
+El microservicio generado incluye el endpoint:
+
+GET /api/health
+
+## Prueba unitaria generada
+
+El arquetipo genera una prueba unitaria base para validar la clase de servicio inicial.
 
 ## Justificación
-El uso de una base Maven común permite mantener coherencia entre los componentes backend, facilita la creación de nuevos servicios y ayuda a sostener una estructura mantenible y escalable.
+
+Este arquetipo permite estandarizar la creación de nuevos microservicios del proyecto, manteniendo una estructura común, dependencias coherentes y una base mínima de prueba.
