@@ -1,0 +1,123 @@
+{
+  "info": {
+    "name": "Libro de Clases Digital - Parcial 3",
+    "description": "Colección Postman para probar la integración entre frontend, BFF, microservicios y persistencia de datos.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "BFF - Resumen alumno",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/bff/alumnos/1/resumen",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "bff", "alumnos", "1", "resumen"]
+        },
+        "description": "Consulta el resumen consolidado del alumno desde el BFF, integrando información de notas y asistencia."
+      },
+      "response": []
+    },
+    {
+      "name": "MS Notas - Crear nota",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"alumnoId\": 1,\n  \"asignatura\": \"Matemáticas\",\n  \"calificacion\": 6.5\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8082/api/notas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "notas"]
+        },
+        "description": "Crea una nota asociada a un alumno."
+      },
+      "response": []
+    },
+    {
+      "name": "MS Notas - Listar notas por alumno",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/notas/alumno/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "notas", "alumno", "1"]
+        },
+        "description": "Lista las notas registradas para el alumno 1."
+      },
+      "response": []
+    },
+    {
+      "name": "MS Notas - Promedio por alumno",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/notas/alumno/1/promedio",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "notas", "alumno", "1", "promedio"]
+        },
+        "description": "Calcula el promedio general del alumno 1."
+      },
+      "response": []
+    },
+    {
+      "name": "MS Asistencia - Crear asistencia",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"alumnoId\": 1,\n  \"fecha\": \"2026-05-25\",\n  \"estado\": \"PRESENTE\",\n  \"observacion\": \"Asiste a clases\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8083/api/asistencias",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8083",
+          "path": ["api", "asistencias"]
+        },
+        "description": "Crea un registro de asistencia para el alumno 1."
+      },
+      "response": []
+    },
+    {
+      "name": "MS Asistencia - Resumen por alumno",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8083/api/asistencias/alumno/1/resumen",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8083",
+          "path": ["api", "asistencias", "alumno", "1", "resumen"]
+        },
+        "description": "Consulta presentes, ausentes y porcentaje de asistencia del alumno 1."
+      },
+      "response": []
+    }
+  ]
+}
