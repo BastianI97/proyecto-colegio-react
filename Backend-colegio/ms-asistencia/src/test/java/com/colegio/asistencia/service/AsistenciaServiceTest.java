@@ -10,9 +10,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AsistenciaServiceTest {
@@ -23,31 +24,189 @@ class AsistenciaServiceTest {
     @InjectMocks
     private AsistenciaService asistenciaService;
 
-    @Test
-    void calcularPorcentajeAsistenciaDebeRetornarPorcentajeCorrecto() {
-        Long alumnoId = 1L;
-
-        List<Asistencia> registros = List.of(
-                new Asistencia(1L, alumnoId, LocalDate.now(), "PRESENTE", "Asiste a clases"),
-                new Asistencia(2L, alumnoId, LocalDate.now(), "PRESENTE", "Asiste a clases"),
-                new Asistencia(3L, alumnoId, LocalDate.now(), "AUSENTE", "Inasistencia")
+    private Asistencia crearAsistencia(Long id, Long alumnoId, String estado) {
+        return new Asistencia(
+                id,
+                alumnoId,
+                LocalDate.of(2026, 5, 25),
+                estado,
+                "Registro de asistencia"
         );
-
-        when(asistenciaRepository.findByAlumnoId(alumnoId)).thenReturn(registros);
-
-        double porcentaje = asistenciaService.calcularPorcentajeAsistencia(alumnoId);
-
-        assertEquals(66.66666666666667, porcentaje);
     }
 
     @Test
-    void calcularPorcentajeAsistenciaSinRegistrosDebeRetornarCero() {
-        Long alumnoId = 99L;
+    void crearAsistenciaDebeAsignarFechaCuandoVieneNula() {
+        Asistencia asistencia = new Asistencia(
+                null,
+                1L,
+                null,
+                "PRESENTE",
+                "Asiste a clases"
+        );
 
-        when(asistenciaRepository.findByAlumnoId(alumnoId)).thenReturn(List.of());
+        when(asistenciaRepository.save(asistencia)).thenReturn(asistencia);
 
-        double porcentaje = asistenciaService.calcularPorcentajeAsistencia(alumnoId);
+        Asistencia resultado = asistenciaService.crearAsistencia(asistencia);
 
-        assertEquals(0.0, porcentaje);
+        assertNotNull(resultado.getFecha());
+        verify(asistenciaRepository).save(asistencia);
+    }
+
+    @Test
+    void crearAsistenciaDebeMantenerFechaCuandoVieneInformada() {
+        Asistencia asistencia = crearAsistencia(null, 1L, "PRESENTE");
+
+        when(asistenciaRepository.save(asistencia)).thenReturn(asistencia);
+
+        Asistencia resultado = asistenciaService.crearAsistencia(asistencia);
+
+        assertEquals(LocalDate.of(2026, 5, 25), resultado.getFecha());
+        verify(asistenciaRepository).save(asistencia);
+    }
+
+    @Test
+    void listarAsistenciasDebeRetornarLista() {
+        List<Asistencia> asistencias = List.of(
+                crearAsistencia(1L, 1L, "PRESENTE"),
+                crearAsistencia(2L, 1L, "AUSENTE")
+        );
+
+        when(asistenciaRepository.findAll()).thenReturn(asistencias);
+
+        List<Asistencia> resultado = asistenciaService.listarAsistencias();
+
+        assertEquals(2, resultado.size());
+        verify(asistenciaRepository).findAll();
+    }
+
+    @Test
+    void obtenerAsistenciaPorIdDebeRetornarAsistenciaCuandoExiste() {
+        Asistencia asistencia = crearAsistencia(1L, 1L, "PRESENTE");
+
+        when(asistenciaRepository.findById(1L)).thenReturn(Optional.of(asistencia));
+
+        Asistencia resultado = asistenciaService.obtenerAsistenciaPorId(1L);
+
+        assertEquals(1L, resultado.getId());
+        verify(asistenciaRepository).findById(1L);
+    }
+
+    @Test
+    void obtenerAsistenciaPorIdDebeLanzarExcepcionCuandoNoExiste() {
+        when(asistenciaRepository.findById(99L)).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> asistenciaService.obtenerAsistenciaPorId(99L)
+        );
+
+        assertTrue(exception.getMessage().contains("Asistencia no encontrada"));
+        verify(asistenciaRepository).findById(99L);
+    }
+
+    @Test
+    void listarAsistenciasPorAlumnoDebeRetornarLista() {
+        List<Asistencia> asistencias = List.of(
+                crearAsistencia(1L, 1L, "PRESENTE")
+        );
+
+        when(asistenciaRepository.findByAlumnoId(1L)).thenReturn(asistencias);
+
+        List<Asistencia> resultado = asistenciaService.listarAsistenciasPorAlumno(1L);
+
+        assertEquals(1, resultado.size());
+        verify(asistenciaRepository).findByAlumnoId(1L);
+    }
+
+    @Test
+    void listarAsistenciasPorAlumnoYFechaDebeRetornarLista() {
+        LocalDate fecha = LocalDate.of(2026, 5, 25);
+        List<Asistencia> asistencias = List.of(
+                crearAsistencia(1L, 1L, "PRESENTE")
+        );
+
+        when(asistenciaRepository.findByAlumnoIdAndFecha(1L, fecha)).thenReturn(asistencias);
+
+        List<Asistencia> resultado = asistenciaService.listarAsistenciasPorAlumnoYFecha(1L, fecha);
+
+        assertEquals(1, resultado.size());
+        verify(asistenciaRepository).findByAlumnoIdAndFecha(1L, fecha);
+    }
+
+    @Test
+    void actualizarAsistenciaDebeModificarDatos() {
+        Asistencia existente = crearAsistencia(1L, 1L, "PRESENTE");
+        Asistencia actualizada = new Asistencia(
+                null,
+                2L,
+                LocalDate.of(2026, 6, 1),
+                "AUSENTE",
+                "No asiste"
+        );
+
+        when(asistenciaRepository.findById(1L)).thenReturn(Optional.of(existente));
+        when(asistenciaRepository.save(existente)).thenReturn(existente);
+
+        Asistencia resultado = asistenciaService.actualizarAsistencia(1L, actualizada);
+
+        assertEquals(2L, resultado.getAlumnoId());
+        assertEquals(LocalDate.of(2026, 6, 1), resultado.getFecha());
+        assertEquals("AUSENTE", resultado.getEstado());
+        assertEquals("No asiste", resultado.getObservacion());
+        verify(asistenciaRepository).save(existente);
+    }
+
+    @Test
+    void eliminarAsistenciaDebeEliminarRegistroExistente() {
+        Asistencia asistencia = crearAsistencia(1L, 1L, "PRESENTE");
+
+        when(asistenciaRepository.findById(1L)).thenReturn(Optional.of(asistencia));
+
+        asistenciaService.eliminarAsistencia(1L);
+
+        verify(asistenciaRepository).delete(asistencia);
+    }
+
+    @Test
+    void contarPresentesPorAlumnoDebeRetornarTotal() {
+        when(asistenciaRepository.countByAlumnoIdAndEstadoIgnoreCase(1L, "PRESENTE")).thenReturn(3L);
+
+        long resultado = asistenciaService.contarPresentesPorAlumno(1L);
+
+        assertEquals(3L, resultado);
+    }
+
+    @Test
+    void contarAusentesPorAlumnoDebeRetornarTotal() {
+        when(asistenciaRepository.countByAlumnoIdAndEstadoIgnoreCase(1L, "AUSENTE")).thenReturn(1L);
+
+        long resultado = asistenciaService.contarAusentesPorAlumno(1L);
+
+        assertEquals(1L, resultado);
+    }
+
+    @Test
+    void calcularPorcentajeAsistenciaDebeRetornarCeroCuandoNoHayRegistros() {
+        when(asistenciaRepository.findByAlumnoId(1L)).thenReturn(List.of());
+
+        double resultado = asistenciaService.calcularPorcentajeAsistencia(1L);
+
+        assertEquals(0.0, resultado);
+    }
+
+    @Test
+    void calcularPorcentajeAsistenciaDebeCalcularCorrectamente() {
+        List<Asistencia> asistencias = List.of(
+                crearAsistencia(1L, 1L, "PRESENTE"),
+                crearAsistencia(2L, 1L, "PRESENTE"),
+                crearAsistencia(3L, 1L, "AUSENTE"),
+                crearAsistencia(4L, 1L, "AUSENTE")
+        );
+
+        when(asistenciaRepository.findByAlumnoId(1L)).thenReturn(asistencias);
+
+        double resultado = asistenciaService.calcularPorcentajeAsistencia(1L);
+
+        assertEquals(50.0, resultado);
     }
 }
