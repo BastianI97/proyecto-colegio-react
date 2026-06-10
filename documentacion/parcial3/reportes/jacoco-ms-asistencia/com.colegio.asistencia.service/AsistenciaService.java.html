@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AsistenciaService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">ms-asistencia</a> &gt; <a href="index.source.html" class="el_package">com.colegio.asistencia.service</a> &gt; <span class="el_source">AsistenciaService.java</span></div><h1>AsistenciaService.java</h1><pre class="source lang-java linenums">package com.colegio.asistencia.service;
+
+import com.colegio.asistencia.entity.Asistencia;
+import com.colegio.asistencia.repository.AsistenciaRepository;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Service
+public class AsistenciaService {
+
+    private final AsistenciaRepository asistenciaRepository;
+
+<span class="fc" id="L15">    public AsistenciaService(AsistenciaRepository asistenciaRepository) {</span>
+<span class="fc" id="L16">        this.asistenciaRepository = asistenciaRepository;</span>
+<span class="fc" id="L17">    }</span>
+
+    public Asistencia crearAsistencia(Asistencia asistencia) {
+<span class="pc bpc" id="L20" title="1 of 2 branches missed.">        if (asistencia.getFecha() == null) {</span>
+<span class="nc" id="L21">            asistencia.setFecha(LocalDate.now());</span>
+        }
+<span class="fc" id="L23">        return asistenciaRepository.save(asistencia);</span>
+    }
+
+    public List&lt;Asistencia&gt; listarAsistencias() {
+<span class="fc" id="L27">        return asistenciaRepository.findAll();</span>
+    }
+
+    public Asistencia obtenerAsistenciaPorId(Long id) {
+<span class="fc" id="L31">        return asistenciaRepository.findById(id)</span>
+<span class="fc" id="L32">                .orElseThrow(() -&gt; new RuntimeException(&quot;Asistencia no encontrada con id: &quot; + id));</span>
+    }
+
+    public List&lt;Asistencia&gt; listarAsistenciasPorAlumno(Long alumnoId) {
+<span class="fc" id="L36">        return asistenciaRepository.findByAlumnoId(alumnoId);</span>
+    }
+
+    public List&lt;Asistencia&gt; listarAsistenciasPorAlumnoYFecha(Long alumnoId, LocalDate fecha) {
+<span class="fc" id="L40">        return asistenciaRepository.findByAlumnoIdAndFecha(alumnoId, fecha);</span>
+    }
+
+    public Asistencia actualizarAsistencia(Long id, Asistencia asistenciaActualizada) {
+<span class="fc" id="L44">        Asistencia asistenciaExistente = obtenerAsistenciaPorId(id);</span>
+
+<span class="fc" id="L46">        asistenciaExistente.setAlumnoId(asistenciaActualizada.getAlumnoId());</span>
+<span class="fc" id="L47">        asistenciaExistente.setFecha(asistenciaActualizada.getFecha());</span>
+<span class="fc" id="L48">        asistenciaExistente.setEstado(asistenciaActualizada.getEstado());</span>
+<span class="fc" id="L49">        asistenciaExistente.setObservacion(asistenciaActualizada.getObservacion());</span>
+
+<span class="fc" id="L51">        return asistenciaRepository.save(asistenciaExistente);</span>
+    }
+
+    public void eliminarAsistencia(Long id) {
+<span class="fc" id="L55">        Asistencia asistenciaExistente = obtenerAsistenciaPorId(id);</span>
+<span class="fc" id="L56">        asistenciaRepository.delete(asistenciaExistente);</span>
+<span class="fc" id="L57">    }</span>
+
+    public long contarPresentesPorAlumno(Long alumnoId) {
+<span class="fc" id="L60">        return asistenciaRepository.countByAlumnoIdAndEstadoIgnoreCase(alumnoId, &quot;PRESENTE&quot;);</span>
+    }
+
+    public long contarAusentesPorAlumno(Long alumnoId) {
+<span class="fc" id="L64">        return asistenciaRepository.countByAlumnoIdAndEstadoIgnoreCase(alumnoId, &quot;AUSENTE&quot;);</span>
+    }
+
+    public double calcularPorcentajeAsistencia(Long alumnoId) {
+<span class="fc" id="L68">        List&lt;Asistencia&gt; registros = asistenciaRepository.findByAlumnoId(alumnoId);</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (registros.isEmpty()) {</span>
+<span class="fc" id="L71">            return 0.0;</span>
+        }
+
+<span class="fc" id="L74">        long presentes = registros.stream()</span>
+<span class="fc" id="L75">                .filter(registro -&gt; &quot;PRESENTE&quot;.equalsIgnoreCase(registro.getEstado()))</span>
+<span class="fc" id="L76">                .count();</span>
+
+<span class="fc" id="L78">        return (presentes * 100.0) / registros.size();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
