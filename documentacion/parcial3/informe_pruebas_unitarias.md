@@ -190,3 +190,18 @@ Las pruebas fueron ejecutadas mediante Maven con el siguiente comando:
 
 ```bash
 ./mvnw.cmd clean test
+
+
+
+El resultado obtenido fue:
+BUILD SUCCESS
+
+El reporte JaCoCo del microservicio auth-servise entregó los siguientes resultados:
+
+Cobertura total: 65%
+Cobertura service: 82%
+Cobertura controller: 31%
+Cobertura branches: 100%
+Conclusión
+
+Con esta incorporación, el microservicio auth-servise cumple con la cobertura mínima esperada para la evaluación, superando el 60% de cobertura total. Además, se valida automáticamente la lógica crítica de autenticación, roles, creación de alumnos, creación de apoderados y control de acceso.

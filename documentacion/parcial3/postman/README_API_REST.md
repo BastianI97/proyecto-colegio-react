@@ -163,3 +163,21 @@ Ejemplo de respuesta esperada:
 ## Conclusión
 
 La colección Postman permite validar la comunicación REST entre los componentes backend del sistema y comprobar que los datos persistidos por los microservicios pueden ser consultados desde el BFF.
+
+
+
+
+//                          Endpoint agregadfo  y acceso   
+
+---
+
+# Endpoints agregados para roles y control de acceso
+
+Durante la Parcial 3 se incorporó una nueva funcionalidad asociada a autenticación básica, roles de usuario y restricción de acceso para apoderados.
+
+## Auth-servise
+
+### Registrar profesor
+
+```http
+POST http://localhost:8081/api/auth/registro/profesor
