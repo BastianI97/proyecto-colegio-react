@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GestionAcademicaService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-servise</a> &gt; <a href="index.source.html" class="el_package">com.colegio.authservise.service</a> &gt; <span class="el_source">GestionAcademicaService.java</span></div><h1>GestionAcademicaService.java</h1><pre class="source lang-java linenums">package com.colegio.authservise.service;
+
+import com.colegio.authservise.dto.CrearAlumnoRequest;
+import com.colegio.authservise.entity.AlumnoPerfil;
+import com.colegio.authservise.entity.ApoderadoAlumno;
+import com.colegio.authservise.entity.RolUsuario;
+import com.colegio.authservise.entity.Usuario;
+import com.colegio.authservise.repository.AlumnoPerfilRepository;
+import com.colegio.authservise.repository.ApoderadoAlumnoRepository;
+import com.colegio.authservise.repository.UsuarioRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class GestionAcademicaService {
+
+    private final AlumnoPerfilRepository alumnoPerfilRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final ApoderadoAlumnoRepository apoderadoAlumnoRepository;
+
+    public GestionAcademicaService(
+            AlumnoPerfilRepository alumnoPerfilRepository,
+            UsuarioRepository usuarioRepository,
+            ApoderadoAlumnoRepository apoderadoAlumnoRepository
+<span class="fc" id="L26">    ) {</span>
+<span class="fc" id="L27">        this.alumnoPerfilRepository = alumnoPerfilRepository;</span>
+<span class="fc" id="L28">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L29">        this.apoderadoAlumnoRepository = apoderadoAlumnoRepository;</span>
+<span class="fc" id="L30">    }</span>
+
+    public AlumnoPerfil crearAlumno(CrearAlumnoRequest request) {
+<span class="fc" id="L33">        AlumnoPerfil alumno = new AlumnoPerfil();</span>
+<span class="fc" id="L34">        alumno.setNombre(request.getNombre());</span>
+<span class="fc" id="L35">        alumno.setApellido(request.getApellido());</span>
+<span class="fc" id="L36">        alumno.setGrado(request.getGrado());</span>
+
+<span class="fc" id="L38">        return alumnoPerfilRepository.save(alumno);</span>
+    }
+
+    public List&lt;AlumnoPerfil&gt; listarAlumnos() {
+<span class="fc" id="L42">        return alumnoPerfilRepository.findAll();</span>
+    }
+
+    public AlumnoPerfil obtenerAlumnoPorId(Long alumnoId) {
+<span class="fc" id="L46">        return alumnoPerfilRepository.findById(alumnoId)</span>
+<span class="fc" id="L47">                .orElseThrow(() -&gt; new RuntimeException(&quot;Alumno no encontrado con id: &quot; + alumnoId));</span>
+    }
+
+    public List&lt;Usuario&gt; listarApoderados() {
+<span class="fc" id="L51">        return usuarioRepository.findAll()</span>
+<span class="fc" id="L52">                .stream()</span>
+<span class="fc bfc" id="L53" title="All 2 branches covered.">                .filter(usuario -&gt; usuario.getRol() == RolUsuario.APODERADO)</span>
+<span class="fc" id="L54">                .toList();</span>
+    }
+
+    public ApoderadoAlumno asociarApoderadoConAlumno(Long apoderadoId, Long alumnoId) {
+<span class="fc" id="L58">        Usuario apoderado = usuarioRepository.findById(apoderadoId)</span>
+<span class="fc" id="L59">                .orElseThrow(() -&gt; new RuntimeException(&quot;Apoderado no encontrado con id: &quot; + apoderadoId));</span>
+
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (apoderado.getRol() != RolUsuario.APODERADO) {</span>
+<span class="fc" id="L62">            throw new RuntimeException(&quot;El usuario indicado no tiene rol APODERADO&quot;);</span>
+        }
+
+<span class="fc" id="L65">        AlumnoPerfil alumno = alumnoPerfilRepository.findById(alumnoId)</span>
+<span class="fc" id="L66">                .orElseThrow(() -&gt; new RuntimeException(&quot;Alumno no encontrado con id: &quot; + alumnoId));</span>
+
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if (apoderadoAlumnoRepository.existsByApoderadoIdAndAlumnoId(apoderadoId, alumnoId)) {</span>
+<span class="fc" id="L69">            throw new RuntimeException(&quot;El apoderado ya se encuentra asociado a este alumno&quot;);</span>
+        }
+
+<span class="fc" id="L72">        ApoderadoAlumno relacion = new ApoderadoAlumno();</span>
+<span class="fc" id="L73">        relacion.setApoderado(apoderado);</span>
+<span class="fc" id="L74">        relacion.setAlumno(alumno);</span>
+
+<span class="fc" id="L76">        return apoderadoAlumnoRepository.save(relacion);</span>
+    }
+
+    public List&lt;AlumnoPerfil&gt; listarAlumnosPorApoderado(Long apoderadoId) {
+<span class="fc" id="L80">        return apoderadoAlumnoRepository.findByApoderadoId(apoderadoId)</span>
+<span class="fc" id="L81">                .stream()</span>
+<span class="fc" id="L82">                .map(ApoderadoAlumno::getAlumno)</span>
+<span class="fc" id="L83">                .toList();</span>
+    }
+
+    public boolean apoderadoPuedeVerAlumno(Long apoderadoId, Long alumnoId) {
+<span class="fc" id="L87">        return apoderadoAlumnoRepository.existsByApoderadoIdAndAlumnoId(apoderadoId, alumnoId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

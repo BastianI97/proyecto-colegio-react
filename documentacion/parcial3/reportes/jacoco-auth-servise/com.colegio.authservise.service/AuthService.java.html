@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-servise</a> &gt; <a href="index.source.html" class="el_package">com.colegio.authservise.service</a> &gt; <span class="el_source">AuthService.java</span></div><h1>AuthService.java</h1><pre class="source lang-java linenums">package com.colegio.authservise.service;
+
+import com.colegio.authservise.dto.AuthResponse;
+import com.colegio.authservise.dto.LoginRequest;
+import com.colegio.authservise.dto.RegistroUsuarioRequest;
+import com.colegio.authservise.entity.RolUsuario;
+import com.colegio.authservise.entity.Usuario;
+import com.colegio.authservise.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthService {
+
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
+
+<span class="fc" id="L18">    public AuthService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {</span>
+<span class="fc" id="L19">        this.usuarioRepository = usuarioRepository;</span>
+<span class="fc" id="L20">        this.passwordEncoder = passwordEncoder;</span>
+<span class="fc" id="L21">    }</span>
+
+    public AuthResponse registrarProfesor(RegistroUsuarioRequest request) {
+<span class="fc" id="L24">        return registrarUsuario(request, RolUsuario.PROFESOR, &quot;Profesor registrado correctamente&quot;);</span>
+    }
+
+    public AuthResponse registrarApoderado(RegistroUsuarioRequest request) {
+<span class="fc" id="L28">        return registrarUsuario(request, RolUsuario.APODERADO, &quot;Apoderado registrado correctamente&quot;);</span>
+    }
+
+    private AuthResponse registrarUsuario(RegistroUsuarioRequest request, RolUsuario rol, String mensaje) {
+<span class="fc bfc" id="L32" title="All 2 branches covered.">        if (usuarioRepository.existsByEmail(request.getEmail())) {</span>
+<span class="fc" id="L33">            throw new RuntimeException(&quot;Ya existe un usuario registrado con ese email&quot;);</span>
+        }
+
+<span class="fc" id="L36">        Usuario usuario = new Usuario();</span>
+<span class="fc" id="L37">        usuario.setNombre(request.getNombre());</span>
+<span class="fc" id="L38">        usuario.setApellido(request.getApellido());</span>
+<span class="fc" id="L39">        usuario.setEmail(request.getEmail());</span>
+<span class="fc" id="L40">        usuario.setPassword(passwordEncoder.encode(request.getPassword()));</span>
+<span class="fc" id="L41">        usuario.setRol(rol);</span>
+
+<span class="fc" id="L43">        Usuario usuarioGuardado = usuarioRepository.save(usuario);</span>
+
+<span class="fc" id="L45">        return new AuthResponse(</span>
+<span class="fc" id="L46">                usuarioGuardado.getId(),</span>
+<span class="fc" id="L47">                usuarioGuardado.getNombre(),</span>
+<span class="fc" id="L48">                usuarioGuardado.getApellido(),</span>
+<span class="fc" id="L49">                usuarioGuardado.getEmail(),</span>
+<span class="fc" id="L50">                usuarioGuardado.getRol().name(),</span>
+                mensaje
+        );
+    }
+
+    public AuthResponse login(LoginRequest request) {
+<span class="fc" id="L56">        Usuario usuario = usuarioRepository.findByEmail(request.getEmail())</span>
+<span class="fc" id="L57">                .orElseThrow(() -&gt; new RuntimeException(&quot;Usuario no encontrado&quot;));</span>
+
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {</span>
+<span class="fc" id="L60">            throw new RuntimeException(&quot;Credenciales inválidas&quot;);</span>
+        }
+
+<span class="fc" id="L63">        return new AuthResponse(</span>
+<span class="fc" id="L64">                usuario.getId(),</span>
+<span class="fc" id="L65">                usuario.getNombre(),</span>
+<span class="fc" id="L66">                usuario.getApellido(),</span>
+<span class="fc" id="L67">                usuario.getEmail(),</span>
+<span class="fc" id="L68">                usuario.getRol().name(),</span>
+                &quot;Login correcto&quot;
+        );
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

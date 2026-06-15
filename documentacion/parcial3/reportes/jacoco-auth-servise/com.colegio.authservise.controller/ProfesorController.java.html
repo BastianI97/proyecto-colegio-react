@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ProfesorController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">auth-servise</a> &gt; <a href="index.source.html" class="el_package">com.colegio.authservise.controller</a> &gt; <span class="el_source">ProfesorController.java</span></div><h1>ProfesorController.java</h1><pre class="source lang-java linenums">package com.colegio.authservise.controller;
+
+import com.colegio.authservise.dto.AuthResponse;
+import com.colegio.authservise.dto.CrearAlumnoRequest;
+import com.colegio.authservise.dto.RegistroUsuarioRequest;
+import com.colegio.authservise.entity.AlumnoPerfil;
+import com.colegio.authservise.entity.ApoderadoAlumno;
+import com.colegio.authservise.entity.Usuario;
+import com.colegio.authservise.service.AuthService;
+import com.colegio.authservise.service.GestionAcademicaService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/profesor&quot;)
+public class ProfesorController {
+
+    private final GestionAcademicaService gestionAcademicaService;
+    private final AuthService authService;
+
+<span class="fc" id="L24">    public ProfesorController(GestionAcademicaService gestionAcademicaService, AuthService authService) {</span>
+<span class="fc" id="L25">        this.gestionAcademicaService = gestionAcademicaService;</span>
+<span class="fc" id="L26">        this.authService = authService;</span>
+<span class="fc" id="L27">    }</span>
+
+    @PostMapping(&quot;/alumnos&quot;)
+    public ResponseEntity&lt;AlumnoPerfil&gt; crearAlumno(@RequestBody CrearAlumnoRequest request) {
+<span class="nc" id="L31">        AlumnoPerfil alumno = gestionAcademicaService.crearAlumno(request);</span>
+<span class="nc" id="L32">        return new ResponseEntity&lt;&gt;(alumno, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping(&quot;/alumnos&quot;)
+    public ResponseEntity&lt;List&lt;AlumnoPerfil&gt;&gt; listarAlumnos() {
+<span class="nc" id="L37">        return ResponseEntity.ok(gestionAcademicaService.listarAlumnos());</span>
+    }
+
+    @GetMapping(&quot;/alumnos/{alumnoId}&quot;)
+    public ResponseEntity&lt;AlumnoPerfil&gt; obtenerAlumnoPorId(@PathVariable Long alumnoId) {
+<span class="nc" id="L42">        return ResponseEntity.ok(gestionAcademicaService.obtenerAlumnoPorId(alumnoId));</span>
+    }
+
+    @PostMapping(&quot;/apoderados&quot;)
+    public ResponseEntity&lt;AuthResponse&gt; crearApoderado(@RequestBody RegistroUsuarioRequest request) {
+<span class="nc" id="L47">        return new ResponseEntity&lt;&gt;(authService.registrarApoderado(request), HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping(&quot;/apoderados&quot;)
+    public ResponseEntity&lt;List&lt;Usuario&gt;&gt; listarApoderados() {
+<span class="nc" id="L52">        return ResponseEntity.ok(gestionAcademicaService.listarApoderados());</span>
+    }
+
+    @PostMapping(&quot;/apoderados/{apoderadoId}/alumnos/{alumnoId}&quot;)
+    public ResponseEntity&lt;ApoderadoAlumno&gt; asociarApoderadoConAlumno(
+            @PathVariable Long apoderadoId,
+            @PathVariable Long alumnoId
+    ) {
+<span class="nc" id="L60">        ApoderadoAlumno relacion = gestionAcademicaService.asociarApoderadoConAlumno(apoderadoId, alumnoId);</span>
+<span class="nc" id="L61">        return new ResponseEntity&lt;&gt;(relacion, HttpStatus.CREATED);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

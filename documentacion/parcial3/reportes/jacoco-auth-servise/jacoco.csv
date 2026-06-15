@@ -1,0 +1,8 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+auth-servise,com.colegio.authservise.controller,ProfesorController,48,9,0,0,8,4,6,1,6,1
+auth-servise,com.colegio.authservise.controller,CursoController,42,6,0,0,10,3,5,1,5,1
+auth-servise,com.colegio.authservise.controller,ApoderadoController,22,6,0,0,4,3,2,1,2,1
+auth-servise,com.colegio.authservise.controller,AuthController,0,30,0,0,0,6,0,4,0,4
+auth-servise,com.colegio.authservise.service,AuthService,0,123,0,4,0,31,0,8,0,6
+auth-servise,com.colegio.authservise.service,CursoServise,60,6,0,0,13,3,6,1,6,1
+auth-servise,com.colegio.authservise.service,GestionAcademicaService,0,150,0,6,0,34,0,15,0,12
