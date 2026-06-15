@@ -122,3 +122,71 @@ Los tres componentes principales superan la cobertura mínima solicitada:
 ## Conclusión
 
 Las pruebas unitarias permiten validar la lógica principal del sistema y respaldan la calidad de la integración entre microservicios. Los resultados obtenidos demuestran que los componentes backend principales cumplen con la cobertura mínima requerida y mantienen una estructura de pruebas organizada por componente.
+
+
+
+//Agregado
+
+---
+
+## Pruebas unitarias auth-servise
+
+Se incorporaron pruebas unitarias al microservicio `auth-servise`, encargado de la gestión de usuarios, roles, login y asociación entre apoderado y alumno.
+
+### Clases probadas
+
+- `AuthServiceTest`
+- `GestionAcademicaServiceTest`
+- `AuthControllerTest`
+
+### Funcionalidades validadas
+
+- Registro de profesor.
+- Registro de apoderado.
+- Inicio de sesión.
+- Validación de credenciales incorrectas.
+- Creación de alumnos.
+- Listado de alumnos.
+- Búsqueda de alumno por id.
+- Listado de apoderados.
+- Asociación entre apoderado y alumno.
+- Validación de acceso del apoderado a un alumno.
+- Pruebas de endpoints principales del controlador de autenticación.
+
+### Resultado de ejecución
+
+Las pruebas fueron ejecutadas mediante Maven con el siguiente comando:
+
+```bash
+./mvnw.cmd clean test---
+
+## Pruebas unitarias auth-servise
+
+Se incorporaron pruebas unitarias al microservicio `auth-servise`, encargado de la gestión de usuarios, roles, login y asociación entre apoderado y alumno.
+
+### Clases probadas
+
+- `AuthServiceTest`
+- `GestionAcademicaServiceTest`
+- `AuthControllerTest`
+
+### Funcionalidades validadas
+
+- Registro de profesor.
+- Registro de apoderado.
+- Inicio de sesión.
+- Validación de credenciales incorrectas.
+- Creación de alumnos.
+- Listado de alumnos.
+- Búsqueda de alumno por id.
+- Listado de apoderados.
+- Asociación entre apoderado y alumno.
+- Validación de acceso del apoderado a un alumno.
+- Pruebas de endpoints principales del controlador de autenticación.
+
+### Resultado de ejecución
+
+Las pruebas fueron ejecutadas mediante Maven con el siguiente comando:
+
+```bash
+./mvnw.cmd clean test
