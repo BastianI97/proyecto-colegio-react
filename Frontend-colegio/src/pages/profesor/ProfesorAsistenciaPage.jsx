@@ -4,6 +4,8 @@ import RoleLayout from '../../components/layout/RoleLayout'
 import TopNavbar from '../../components/layout/TopNavbar'
 import HeroBanner from '../../components/common/HeroBanner'
 import InfoCard from '../../components/common/InfoCard'
+const ASISTENCIA_API_URL = 'http://localhost:8083/api/asistencias'
+
 
 const BASE_STUDENTS = [
   { id: 1, name: 'Héctor González', present: true },
@@ -60,10 +62,35 @@ function ProfesorAsistenciaPage() {
     setSaveMessage('')
   }
 
-  const handleSaveAttendance = () => {
+  const handleSaveAttendance = async () => {
+  try {
+    const fechaHoy = new Date().toISOString().split('T')[0]
+
+    const registros = students.map((student) => ({
+      alumnoId: student.id,
+      fecha: fechaHoy,
+      estado: student.present ? 'PRESENTE' : 'AUSENTE',
+      observacion: `Registro desde frontend profesor - ${selectedCourse}`,
+    }))
+
+    await Promise.all(
+      registros.map((registro) =>
+        fetch(ASISTENCIA_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(registro),
+        })
+      )
+    )
+
     localStorage.setItem(`attendance_${selectedCourse}`, JSON.stringify(students))
-    setSaveMessage(`Asistencia guardada para ${selectedCourse}`)
+    setSaveMessage(`Asistencia guardada en MySQL para ${selectedCourse}`)
+  } catch (error) {
+    setSaveMessage('No se pudo guardar la asistencia en el backend.')
   }
+}
 
   const presentCount = students.filter((student) => student.present).length
   const absentCount = students.length - presentCount

@@ -16,14 +16,49 @@ export function AuthProvider({ children }) {
     }
   }, [user])
 
-  const login = (role) => {
-    const usersByRole = {
-      PROFESOR: { name: 'Profesor Demo', role: 'PROFESOR' },
-      ALUMNO: { name: 'Alumno Demo', role: 'ALUMNO' },
-      APODERADO: { name: 'Apoderado Demo', role: 'APODERADO' },
+  const login = (payload) => {
+    if (typeof payload === 'string') {
+      const usersByRole = {
+        PROFESOR: {
+          id: 1,
+          name: 'Profesor Demo',
+          nombre: 'Profesor',
+          apellido: 'Demo',
+          email: 'profesor@colegio.cl',
+          role: 'PROFESOR',
+        },
+        ALUMNO: {
+          id: 1,
+          name: 'Alumno Demo',
+          nombre: 'Alumno',
+          apellido: 'Demo',
+          email: 'alumno@colegio.cl',
+          role: 'ALUMNO',
+        },
+        APODERADO: {
+          id: 2,
+          name: 'Apoderado Demo',
+          nombre: 'Maria',
+          apellido: 'Gonzalez',
+          email: 'maria.apoderado@colegio.cl',
+          role: 'APODERADO',
+        },
+      }
+
+      setUser(usersByRole[payload] || null)
+      return
     }
 
-    setUser(usersByRole[role] || null)
+    const normalizedUser = {
+      id: payload.id,
+      name: `${payload.nombre || ''} ${payload.apellido || ''}`.trim(),
+      nombre: payload.nombre,
+      apellido: payload.apellido,
+      email: payload.email,
+      role: payload.rol || payload.role,
+    }
+
+    setUser(normalizedUser)
   }
 
   const logout = () => {

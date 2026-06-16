@@ -1,0 +1,293 @@
+{
+  "info": {
+    "name": "Libro de Clases Digital - Roles y Acceso Apoderado",
+    "description": "Colección Postman para probar autenticación, roles, gestión de alumnos/apoderados y control de acceso desde BFF.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth - Registrar profesor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/auth/registro/profesor",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "registro",
+            "profesor"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Profesor\",\n  \"apellido\": \"Demo\",\n  \"email\": \"profesor@colegio.cl\",\n  \"password\": \"123456\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Registrar apoderado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/auth/registro/apoderado",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "registro",
+            "apoderado"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Gonzalez\",\n  \"email\": \"maria.apoderado@colegio.cl\",\n  \"password\": \"123456\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Auth - Login profesor",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/auth/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"profesor@colegio.cl\",\n  \"password\": \"123456\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Profesor - Crear alumno",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/profesor/alumnos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "profesor",
+            "alumnos"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Hector\",\n  \"apellido\": \"Gonzalez\",\n  \"grado\": \"5 Grado B\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Profesor - Crear apoderado",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8081/api/profesor/apoderados",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "profesor",
+            "apoderados"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Gonzalez\",\n  \"email\": \"maria.apoderado@colegio.cl\",\n  \"password\": \"123456\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Profesor - Asociar apoderado con alumno",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/profesor/apoderados/2/alumnos/1",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "profesor",
+            "apoderados",
+            "2",
+            "alumnos",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Apoderado - Listar alumnos asociados",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/apoderados/2/alumnos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "apoderados",
+            "2",
+            "alumnos"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Apoderado - Validar acceso a alumno",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/api/apoderados/2/alumnos/1/validar",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "api",
+            "apoderados",
+            "2",
+            "alumnos",
+            "1",
+            "validar"
+          ]
+        }
+      }
+    },
+    {
+      "name": "BFF - Listar alumnos del apoderado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/bff/apoderados/2/alumnos",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "bff",
+            "apoderados",
+            "2",
+            "alumnos"
+          ]
+        }
+      }
+    },
+    {
+      "name": "BFF - Resumen académico autorizado",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/bff/apoderados/2/alumnos/1/resumen",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "bff",
+            "apoderados",
+            "2",
+            "alumnos",
+            "1",
+            "resumen"
+          ]
+        }
+      }
+    },
+    {
+      "name": "BFF - Bloqueo alumno no asociado 403",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/bff/apoderados/2/alumnos/999/resumen",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "bff",
+            "apoderados",
+            "2",
+            "alumnos",
+            "999",
+            "resumen"
+          ]
+        }
+      }
+    }
+  ]
+}

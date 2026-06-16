@@ -1,0 +1,37 @@
+flowchart LR
+
+    U["Usuario<br/>Alumno / Profesor / Apoderado"]
+    N["Navegador Web"]
+    FE["Frontend React + Vite<br/>Frontend-colegio<br/>Puerto 5173"]
+
+    BFF["Backend For Frontend<br/>bff-colegio<br/>Spring Boot<br/>Puerto 8080"]
+
+    MSNOTAS["Microservicio de Notas<br/>ms-notas<br/>Spring Boot + JPA<br/>Puerto 8082"]
+    MSASIST["Microservicio de Asistencia<br/>ms-asistencia<br/>Spring Boot + JPA<br/>Puerto 8083"]
+
+    DBNOTAS[("MySQL<br/>Persistencia de notas")]
+    DBASIST[("MySQL<br/>Persistencia de asistencia")]
+
+    U --> N
+    N --> FE
+
+    FE -->|"HTTP REST / JSON<br/>GET /api/bff/alumnos/1/resumen"| BFF
+
+    BFF -->|"REST / JSON<br/>GET /api/notas/alumno/{id}<br/>GET /api/notas/alumno/{id}/promedio"| MSNOTAS
+
+    BFF -->|"REST / JSON<br/>GET /api/asistencias/alumno/{id}/resumen"| MSASIST
+
+    MSNOTAS -->|"Spring Data JPA"| DBNOTAS
+    MSASIST -->|"Spring Data JPA"| DBASIST
+
+    classDef frontend fill:#E3F2FD,stroke:#1565C0,stroke-width:2px,color:#000;
+    classDef bff fill:#FFF3E0,stroke:#EF6C00,stroke-width:2px,color:#000;
+    classDef micro fill:#E8F5E9,stroke:#2E7D32,stroke-width:2px,color:#000;
+    classDef db fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px,color:#000;
+    classDef user fill:#ECEFF1,stroke:#455A64,stroke-width:2px,color:#000;
+
+    class U,N user;
+    class FE frontend;
+    class BFF bff;
+    class MSNOTAS,MSASIST micro;
+    class DBNOTAS,DBASIST db;
