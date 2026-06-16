@@ -70,6 +70,7 @@ function ProfesorSeleccionCursoPage() {
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
         >
+
           <div style={styles.fakeSelect}>
             <span>{selectedCourse}</span>
             <span style={styles.arrow}>▾</span>
@@ -89,6 +90,24 @@ function ProfesorSeleccionCursoPage() {
             </div>
           )}
         </div>
+
+
+                  <button
+          style={styles.continueButton}
+          onClick={() => {
+            if (selectedCourse === 'ingrese curso') {
+              return
+            }
+
+            localStorage.setItem('selectedCourse', selectedCourse)
+            navigate('/profesor/dashboard')
+          }}
+        >
+          Continuar al libro de clases
+        </button>
+
+
+
       </section>
     </RoleLayout>
   )
@@ -154,6 +173,19 @@ const styles = {
     borderBottom: '1px solid rgba(0,0,0,0.08)',
     background: '#f8f4e8',
     cursor: 'pointer',
+  },
+
+    continueButton: {
+    marginTop: '28px',
+    padding: '16px 28px',
+    border: 'none',
+    borderRadius: '16px',
+    background: '#2563eb',
+    color: '#ffffff',
+    fontSize: '18px',
+    fontWeight: '800',
+    cursor: 'pointer',
+    boxShadow: '0 8px 18px rgba(0,0,0,0.12)',
   },
 }
 
