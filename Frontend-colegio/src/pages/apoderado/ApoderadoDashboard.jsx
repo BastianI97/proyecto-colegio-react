@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import RoleLayout from '../../components/layout/RoleLayout'
 import TopMenuBar from '../../components/common/TopMenuBar'
+import { useAuth } from '../../context/AuthContext'
 
-const APODERADO_ID = 2
-const ALUMNO_ID = 1
+
 const BFF_URL = 'http://localhost:8080/api/bff'
 
 function ApoderadoDashboard() {
@@ -11,6 +11,7 @@ function ApoderadoDashboard() {
   const [resumen, setResumen] = useState(null)
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
+  const { user } = useAuth()
 
   const requests = [
     {
@@ -25,23 +26,32 @@ function ApoderadoDashboard() {
     },
   ]
 
-  useEffect(() => {
+    useEffect(() => {
     const cargarDatosApoderado = async () => {
       try {
         setCargando(true)
         setError('')
 
-        const alumnosResponse = await fetch(`${BFF_URL}/apoderados/${APODERADO_ID}/alumnos`)
+        if (!user || user.role !== 'APODERADO') {
+          throw new Error('No hay un apoderado autenticado.')
+        }
+
+        const alumnosResponse = await fetch(`${BFF_URL}/apoderados/${user.id}/alumnos`)
         if (!alumnosResponse.ok) {
           throw new Error('No se pudieron obtener los alumnos asociados al apoderado')
         }
 
         const alumnos = await alumnosResponse.json()
         const alumnoAsociado = alumnos[0] || null
+
+        if (!alumnoAsociado) {
+          throw new Error('Este apoderado no tiene alumnos asociados.')
+        }
+
         setAlumno(alumnoAsociado)
 
         const resumenResponse = await fetch(
-          `${BFF_URL}/apoderados/${APODERADO_ID}/alumnos/${ALUMNO_ID}/resumen`
+          `${BFF_URL}/apoderados/${user.id}/alumnos/${alumnoAsociado.id}/resumen`
         )
 
         if (!resumenResponse.ok) {
@@ -58,7 +68,7 @@ function ApoderadoDashboard() {
     }
 
     cargarDatosApoderado()
-  }, [])
+  }, [user])
 
   const asistencia = resumen?.asistencia
   const notas = resumen?.notas || []
@@ -97,7 +107,7 @@ function ApoderadoDashboard() {
                   <strong>Alumno asociado:</strong>{' '}
                   {alumno
                     ? `${alumno.nombre} ${alumno.apellido}`
-                    : `Alumno ID ${ALUMNO_ID}`}
+                    : 'Sin alumno asociado'}
                 </div>
 
                 <div>
@@ -110,7 +120,7 @@ function ApoderadoDashboard() {
                 </div>
 
                 <div>
-                  <strong>Alumno ID:</strong> {resumen?.alumnoId || ALUMNO_ID}
+                  <strong>Alumno ID:</strong> {resumen?.alumnoId || alumno?.id || '-'}
                 </div>
               </div>
             </div>
