@@ -4,10 +4,11 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -31,11 +32,15 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @InjectMocks
     private AuthService authService;
 
+    @BeforeEach
+    void setUp() {
+        authService = new AuthService(usuarioRepository, passwordEncoder);
+    }
+
     @Test
-    void registrarProfesor_deberiaCrearUsuarioConRolProfesor() {                                  //ESTA
+    void registrarProfesor_deberiaGuardarUsuarioConRolProfesor() {
         RegistroUsuarioRequest request = new RegistroUsuarioRequest();
         request.setNombre("Profesor");
         request.setApellido("Demo");
@@ -57,17 +62,16 @@ class AuthServiceTest {
         assertEquals("Profesor", response.getNombre());
         assertEquals("Demo", response.getApellido());
         assertEquals("profesor@colegio.cl", response.getEmail());
-        assertEquals("PROFESOR", response.getRol());                                                     //agregado
+        assertEquals("PROFESOR", response.getRol());
+        assertEquals("Profesor registrado correctamente", response.getMensaje());
 
+        verify(usuarioRepository).existsByEmail("profesor@colegio.cl");
+        verify(passwordEncoder).encode("123456");
         verify(usuarioRepository).save(any(Usuario.class));
     }
 
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
     @Test
-    void registrarApoderado_deberiaCrearUsuarioConRolApoderado() {                                          //ESTA
+    void registrarApoderado_deberiaGuardarUsuarioConRolApoderado() {
         RegistroUsuarioRequest request = new RegistroUsuarioRequest();
         request.setNombre("Maria");
         request.setApellido("Gonzalez");
@@ -89,19 +93,16 @@ class AuthServiceTest {
         assertEquals("Maria", response.getNombre());
         assertEquals("Gonzalez", response.getApellido());
         assertEquals("maria.apoderado@colegio.cl", response.getEmail());
-        assertEquals("APODERADO", response.getRol());                                                          //agregado
+        assertEquals("APODERADO", response.getRol());
+        assertEquals("Apoderado registrado correctamente", response.getMensaje());
 
+        verify(usuarioRepository).existsByEmail("maria.apoderado@colegio.cl");
+        verify(passwordEncoder).encode("123456");
         verify(usuarioRepository).save(any(Usuario.class));
     }
 
-
-
-
-
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     @Test
-    void registrarProfesor_deberiaLanzarErrorSiEmailYaExiste() {
+    void registrarProfesor_deberiaLanzarErrorCuandoEmailYaExiste() {
         RegistroUsuarioRequest request = new RegistroUsuarioRequest();
         request.setNombre("Profesor");
         request.setApellido("Demo");
@@ -110,19 +111,19 @@ class AuthServiceTest {
 
         when(usuarioRepository.existsByEmail("profesor@colegio.cl")).thenReturn(true);
 
-        assertThrows(RuntimeException.class, () -> authService.registrarProfesor(request));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.registrarProfesor(request)
+        );
 
+        assertEquals("Ya existe un usuario registrado con ese email", exception.getMessage());
+
+        verify(usuarioRepository).existsByEmail("profesor@colegio.cl");
         verify(usuarioRepository, never()).save(any(Usuario.class));
     }
 
-
-
-
-
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     @Test
-    void login_deberiaRetornarUsuarioCuandoCredencialesSonValidas() {                                                //ESTA
+    void login_deberiaRetornarRespuestaCuandoCredencialesSonValidas() {
         LoginRequest request = new LoginRequest();
         request.setEmail("maria.apoderado@colegio.cl");
         request.setPassword("123456");
@@ -147,17 +148,15 @@ class AuthServiceTest {
         assertEquals("Maria", response.getNombre());
         assertEquals("Gonzalez", response.getApellido());
         assertEquals("maria.apoderado@colegio.cl", response.getEmail());
-        assertEquals("APODERADO", response.getRol());                                              //agregado
+        assertEquals("APODERADO", response.getRol());
+        assertEquals("Login correcto", response.getMensaje());
+
+        verify(usuarioRepository).findByEmail("maria.apoderado@colegio.cl");
+        verify(passwordEncoder).matches("123456", "password-encriptada");
     }
 
-
-
-
-
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     @Test
-    void login_deberiaLanzarErrorSiUsuarioNoExiste() {
+    void login_deberiaLanzarErrorCuandoUsuarioNoExiste() {
         LoginRequest request = new LoginRequest();
         request.setEmail("noexiste@colegio.cl");
         request.setPassword("123456");
@@ -165,19 +164,22 @@ class AuthServiceTest {
         when(usuarioRepository.findByEmail("noexiste@colegio.cl"))
                 .thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> authService.login(request));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals("Usuario no encontrado", exception.getMessage());
+
+        verify(usuarioRepository).findByEmail("noexiste@colegio.cl");
+        verify(passwordEncoder, never()).matches(anyString(), anyString());
     }
 
-
-
-
-    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
     @Test
-    void login_deberiaLanzarErrorSiPasswordEsIncorrecta() {
+    void login_deberiaLanzarErrorCuandoPasswordEsIncorrecto() {
         LoginRequest request = new LoginRequest();
         request.setEmail("maria.apoderado@colegio.cl");
-        request.setPassword("clave-mala");
+        request.setPassword("clave-incorrecta");
 
         Usuario usuario = new Usuario();
         usuario.setId(2L);
@@ -190,9 +192,17 @@ class AuthServiceTest {
         when(usuarioRepository.findByEmail("maria.apoderado@colegio.cl"))
                 .thenReturn(Optional.of(usuario));
 
-        when(passwordEncoder.matches("clave-mala", "password-encriptada"))
+        when(passwordEncoder.matches("clave-incorrecta", "password-encriptada"))
                 .thenReturn(false);
 
-        assertThrows(RuntimeException.class, () -> authService.login(request));
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> authService.login(request)
+        );
+
+        assertEquals("Credenciales inválidas", exception.getMessage());
+
+        verify(usuarioRepository).findByEmail("maria.apoderado@colegio.cl");
+        verify(passwordEncoder).matches("clave-incorrecta", "password-encriptada");
     }
 }
